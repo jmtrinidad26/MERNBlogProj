@@ -19,7 +19,7 @@ const handleError = (error) => {
 
 export async function getPosts() {
   try {
-    const res = await axios.get(`${URL}/posts`);
+    const res = await axios.get(`${API_URL}/posts`);
     if (res.status === 200) {
       return res.data || [];
     }
