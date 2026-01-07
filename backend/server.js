@@ -10,7 +10,9 @@ const port = process.env.PORT
 const corsOptions = {
     origin: [
       'http://localhost:5173',
-      'https://blog-21xftzh97-jmtrinidads-projects-c5d38af8.vercel.app' 
+      'http://localhost:3000',
+      'https://blog-app-pi-blue.vercel.app',  // Your Vercel URL
+      'https://blog-21xftzh97-jmtrinidads-projects-c5d38af8.vercel.app'  // Alternative URL
     ],
     credentials: true,
     optionsSuccessStatus: 200
