@@ -32,7 +32,7 @@ export async function getPosts() {
 
 export async function getPost(id) {
   try {
-    const res = await axios.get(`${URL}/posts/${id}`);
+    const res = await axios.get(`${API_URL}/posts/${id}`);
     if (res.status === 200) {
       return res.data;
     }
@@ -55,7 +55,7 @@ export async function createPost(post) {
 
 export async function updatePost(id, post) {
   try {
-    const res = await axios.put(`${URL}/posts/${id}`, post);
+    const res = await axios.put(`${API_URL}/posts/${id}`, post);
     return res;
   } catch (error) {
     handleError(error);
@@ -65,7 +65,7 @@ export async function updatePost(id, post) {
 
 export async function deletePost(id) {
   try {
-    const res = await axios.delete(`${URL}/posts/${id}`);
+    const res = await axios.delete(`${API_URL}/posts/${id}`);
     return res;
   } catch (error) {
     handleError(error);
@@ -75,7 +75,7 @@ export async function deletePost(id) {
 
 export async function createUser(user) {
   try {
-    const res = await axios.post(`${URL}/users`, user);
+    const res = await axios.post(`${API_URL}/users`, user);
     return res;
   } catch (error) {
     handleError(error);
@@ -85,7 +85,7 @@ export async function createUser(user) {
 
 export async function updateUser(id, user) {
   try {
-    const res = await axios.put(`${URL}/users/${id}`, user);
+    const res = await axios.put(`${API_URL}/users/${id}`, user);
     return res;
   } catch (error) {
     handleError(error);
@@ -95,7 +95,7 @@ export async function updateUser(id, user) {
 
 export async function deleteUser(id) {
   try {
-    const res = await axios.delete(`${URL}/users/${id}`);
+    const res = await axios.delete(`${API_URL}/users/${id}`);
     return res;
   } catch (error) {
     handleError(error);
@@ -105,7 +105,7 @@ export async function deleteUser(id) {
 
 export async function verifyUser(user) {
   try {
-    const res = await axios.post(`${URL}/users/login`, user);
+    const res = await axios.post(`${API_URL}/users/login`, user);
     if (res.data.success) {
       return res.data.token;
     } else {
