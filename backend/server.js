@@ -8,8 +8,17 @@ const users = require('./userRoutes')
 const app = express();
 const port = process.env.PORT
 
-
-app.use(cors())
+const corsOptions = {
+    origin: [
+      'http://localhost:5173', // Local Vite dev
+      'http://localhost:3000', // Alternative local
+      'https://your-frontend-name.vercel.app' 
+    ],
+    credentials: true,
+    optionsSuccessStatus: 200
+  };
+  
+app.use(cors(corsOptions));
 app.use(express.json())
 app.use(posts)
 app.use(users)
