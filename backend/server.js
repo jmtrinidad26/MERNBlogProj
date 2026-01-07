@@ -7,23 +7,22 @@ const users = require('./userRoutes')
 
 const app = express();
 const port = process.env.PORT
-
 const corsOptions = {
     origin: [
-      'http://localhost:5173', // Local Vite dev
-      'http://localhost:3000', // Alternative local
-      'https://your-frontend-name.vercel.app' 
+      'http://localhost:5173',
+      'https://blog-21xftzh97-jmtrinidads-projects-c5d38af8.vercel.app' 
     ],
     credentials: true,
     optionsSuccessStatus: 200
   };
   
-app.use(cors(corsOptions));
+  app.use(cors(corsOptions));
 app.use(express.json())
 app.use(posts)
 app.use(users)
 
-app.listen(port, () => {
-    connect.connectToServer()
-    console.log(`server is running on port ${port}`)
-})
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
