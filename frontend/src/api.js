@@ -45,7 +45,7 @@ export async function getPost(id) {
 
 export async function createPost(post) {
   try {
-    const res = await axios.post(`${URL}/posts`, post);
+    const res = await axios.post(`${API_URL}/posts`, post);
     return res;
   } catch (error) {
     handleError(error);
