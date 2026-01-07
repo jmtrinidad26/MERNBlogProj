@@ -2,13 +2,9 @@ const express = require("express");
 const database = require("./connect");
 const { ObjectId } = require("mongodb");
 let postRoutes = express.Router();
-require("dotenv").config({path:"./config.env"})
+require("dotenv").config()
 const jwt = require('jsonwebtoken')
 
-
-
-
-// #1 retrieve all - http://localhost:3000/posts
 postRoutes.route("/posts").get(verifyToken, async (req, res) => {
     let db = database.getDb();
     try {
@@ -19,12 +15,10 @@ postRoutes.route("/posts").get(verifyToken, async (req, res) => {
             res.status(404).json({ message: "No data found" });
         }
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
-// #2 retrieve one - http://localhost:3000/posts/12345
 postRoutes.route("/posts/:id").get(verifyToken, async (req, res) => {
     let db = database.getDb();
     try {
@@ -35,63 +29,82 @@ postRoutes.route("/posts/:id").get(verifyToken, async (req, res) => {
             res.status(404).json({ message: "Post not found" });
         }
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
-// #3 create one
 postRoutes.route("/posts").post(verifyToken, async (req, res) => {
     let db = database.getDb();
     try {
+        const author = req.body.user?.name || req.body.user?.email || req.body.author || "Anonymous";
+        
         let mongoObject = {
             title: req.body.title,
             description: req.body.description,
             content: req.body.content,
-            author: req.body.author,
-            dateCreated: req.body.dateCreated
+            author: author,
+            dateCreated: req.body.dateCreated || new Date()
         };
         let data = await db.collection("posts").insertOne(mongoObject);
-        res.json(data);
+        res.status(201).json(data);
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
-// #4 update one
 postRoutes.route("/posts/:id").put(verifyToken, async (req, res) => {
     let db = database.getDb();
     try {
+        const post = await db.collection("posts").findOne({ _id: new ObjectId(req.params.id) });
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        const currentUser = req.body.user?.email || req.body.user?.name;
+        const postAuthor = post.author;
+        
+        if (postAuthor !== currentUser && 
+            postAuthor?.toLowerCase() !== currentUser?.toLowerCase()) {
+            return res.status(403).json({ message: "You can only edit your own posts" });
+        }
+
         let mongoObject = {
             $set: { 
                 title: req.body.title,
                 description: req.body.description,
-                content: req.body.content,
-                author: req.body.author,
-                dateCreated: req.body.dateCreated
+                content: req.body.content
             }
         };
         let data = await db.collection("posts").updateOne({ _id: new ObjectId(req.params.id) }, mongoObject);
         res.json(data);
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
-// #6 delete one
 postRoutes.route("/posts/:id").delete(verifyToken, async (req, res) => {
     let db = database.getDb();
     try {
+        const post = await db.collection("posts").findOne({ _id: new ObjectId(req.params.id) });
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        const currentUser = req.body.user?.email || req.body.user?.name;
+        const postAuthor = post.author;
+        
+        if (postAuthor !== currentUser && 
+            postAuthor?.toLowerCase() !== currentUser?.toLowerCase()) {
+            return res.status(403).json({ message: "You can only delete your own posts" });
+        }
+
         let data = await db.collection("posts").deleteOne({ _id: new ObjectId(req.params.id) });
         if (data.deletedCount > 0) {
-            res.json({ message: "Post deleted" });
+            res.json({ message: "Post deleted successfully" });
         } else {
             res.status(404).json({ message: "Post not found" });
         }
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
