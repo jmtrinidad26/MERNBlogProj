@@ -14,9 +14,11 @@ import axios from "axios";
 
 function App() {
   useEffect(() => {
-    let token = sessionStorage.getItem("User")
+    const token = sessionStorage.getItem("User")
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
+    } else {
+      delete axios.defaults.headers.common["Authorization"]
     }
   }, [])
 

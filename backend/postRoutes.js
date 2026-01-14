@@ -60,11 +60,24 @@ postRoutes.route("/posts/:id").put(verifyToken, async (req, res) => {
             return res.status(404).json({ message: "Post not found" });
         }
 
-        const currentUser = req.body.user?.email || req.body.user?.name;
+        const currentUserEmail = req.body.user?.email;
+        const currentUserName = req.body.user?.name;
         const postAuthor = post.author;
         
-        if (postAuthor !== currentUser && 
-            postAuthor?.toLowerCase() !== currentUser?.toLowerCase()) {
+        console.log('Edit Authorization Debug:', {
+            currentUserEmail,
+            currentUserName,
+            postAuthor,
+            emailMatch: postAuthor === currentUserEmail,
+            nameMatch: postAuthor === currentUserName,
+            emailCaseMatch: postAuthor?.toLowerCase() === currentUserEmail?.toLowerCase(),
+            nameCaseMatch: postAuthor?.toLowerCase() === currentUserName?.toLowerCase()
+        });
+        
+        if (postAuthor !== currentUserEmail && 
+            postAuthor !== currentUserName &&
+            postAuthor?.toLowerCase() !== currentUserEmail?.toLowerCase() &&
+            postAuthor?.toLowerCase() !== currentUserName?.toLowerCase()) {
             return res.status(403).json({ message: "You can only edit your own posts" });
         }
 
@@ -90,11 +103,24 @@ postRoutes.route("/posts/:id").delete(verifyToken, async (req, res) => {
             return res.status(404).json({ message: "Post not found" });
         }
 
-        const currentUser = req.body.user?.email || req.body.user?.name;
+        const currentUserEmail = req.body.user?.email;
+        const currentUserName = req.body.user?.name;
         const postAuthor = post.author;
         
-        if (postAuthor !== currentUser && 
-            postAuthor?.toLowerCase() !== currentUser?.toLowerCase()) {
+        console.log('Delete Authorization Debug:', {
+            currentUserEmail,
+            currentUserName,
+            postAuthor,
+            emailMatch: postAuthor === currentUserEmail,
+            nameMatch: postAuthor === currentUserName,
+            emailCaseMatch: postAuthor?.toLowerCase() === currentUserEmail?.toLowerCase(),
+            nameCaseMatch: postAuthor?.toLowerCase() === currentUserName?.toLowerCase()
+        });
+        
+        if (postAuthor !== currentUserEmail && 
+            postAuthor !== currentUserName &&
+            postAuthor?.toLowerCase() !== currentUserEmail?.toLowerCase() &&
+            postAuthor?.toLowerCase() !== currentUserName?.toLowerCase()) {
             return res.status(403).json({ message: "You can only delete your own posts" });
         }
 
@@ -112,15 +138,24 @@ postRoutes.route("/posts/:id").delete(verifyToken, async (req, res) => {
 function verifyToken(request, response, next) {
     const authHeaders = request.headers["authorization"]
     const token = authHeaders && authHeaders.split(' ')[1]
+    
+    console.log('Auth Debug:', {
+        authHeaders,
+        token: token ? 'Token exists' : 'No token',
+        tokenLength: token?.length
+    });
+    
     if (!token) {
         return response.status(401).json({message: "Authentication token is missing"})
     }
 
     jwt.verify(token, process.env.SECRETKEY, (error, user) => {
         if (error) {
+            console.log('JWT Verification Error:', error.message);
             return response.status(403).json({message: "Invalid Token"})
         }
 
+        console.log('JWT User:', user);
         request.body.user = user
         next()
     })

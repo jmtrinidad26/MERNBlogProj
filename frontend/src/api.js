@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export { API_URL };
 axios.defaults.headers.common["Authorization"] = sessionStorage.getItem("User") 
@@ -55,9 +55,16 @@ export async function createPost(post) {
 
 export async function updatePost(id, post) {
   try {
+    const token = sessionStorage.getItem("User");
+    console.log('Frontend Update Debug:', {
+      token: token ? 'Token exists' : 'No token',
+      tokenLength: token?.length,
+      tokenStart: token?.substring(0, 20) + '...'
+    });
     const res = await axios.put(`${API_URL}/posts/${id}`, post);
     return res;
   } catch (error) {
+    console.error('Update post error:', error.response?.data);
     handleError(error);
     throw error;
   }
@@ -65,9 +72,16 @@ export async function updatePost(id, post) {
 
 export async function deletePost(id) {
   try {
+    const token = sessionStorage.getItem("User");
+    console.log('Frontend Delete Debug:', {
+      token: token ? 'Token exists' : 'No token',
+      tokenLength: token?.length,
+      tokenStart: token?.substring(0, 20) + '...'
+    });
     const res = await axios.delete(`${API_URL}/posts/${id}`);
     return res;
   } catch (error) {
+    console.error('Delete post error:', error.response?.data);
     handleError(error);
     throw error;
   }

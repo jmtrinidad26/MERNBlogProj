@@ -1,6 +1,7 @@
 import React from 'react'
-import {getPost, deletePost} from "../api"
+import { getPost, deletePost } from "../api"
 import { useParams, useNavigate } from 'react-router-dom'
+import { FaEdit, FaTrash } from 'react-icons/fa'
 import { useState, useEffect } from 'react';
 
 export function ReadBlog() {
@@ -117,11 +118,11 @@ export function ReadBlog() {
           </button>
           {isAuthor && (
             <div className="blog-actions">
-              <button onClick={handleEdit} className="btn-edit" disabled={isDeleting}>
-                Edit
+              <button onClick={handleEdit} className="btn-edit icon-btn" disabled={isDeleting} aria-label="Edit Post">
+                <FaEdit />
               </button>
-              <button onClick={handleDelete} className="btn-delete" disabled={isDeleting}>
-                {isDeleting ? "Deleting..." : "Delete"}
+              <button onClick={handleDelete} className="btn-delete icon-btn" disabled={isDeleting} aria-label="Delete Post">
+                {isDeleting ? "..." : <FaTrash />}
               </button>
             </div>
           )}
